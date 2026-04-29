@@ -1,0 +1,39 @@
+{
+  "name": "code-visualizer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "predev": "npm run build:worker",
+    "dev": "next dev",
+    "build": "npm run build:worker && npm run build:java && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "build:worker": "tsc --project tsconfig.worker.json",
+    "build:java": "mkdir -p dist/java && javac -d dist/java src/lib/executor/java/Tracer.java"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@prisma/client": "^5.22.0",
+    "acorn": "^8.12.0",
+    "monaco-editor": "^0.52.0",
+    "next": "14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.10",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.15",
+    "postcss": "^8.4.47",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2"
+  }
+}

@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Snippet {
+  id        String   @id @default(cuid())
+  title     String
+  code      String   @db.Text
+  language  String   @default("javascript")
+  userId    String?  // optional — wire up auth later
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ExecutionRun {
+  id         String   @id @default(cuid())
+  snippetId  String?
+  code       String   @db.Text
+  stepCount  Int
+  durationMs Int
+  hadError   Boolean  @default(false)
+  errorMsg   String?
+  createdAt  DateTime @default(now())
+
+  @@index([snippetId])
+  @@index([createdAt])
+}

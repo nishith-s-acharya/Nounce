@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #1c1c1e;
+  --color-bg-elev: #26262a;
+  --color-bg-deep: #141416;
+  --neon-green: #39ff14;
+  --neon-pink: #ff2d95;
+  --neon-cyan: #00e5ff;
+  --neon-amber: #ffb400;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: #e4e4e7;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* SVG-based granule (noise) overlay */
+.granule {
+  position: relative;
+}
+.granule::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.045 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+.granule > * {
+  position: relative;
+  z-index: 1;
+}
+
+.granule-soft {
+  position: relative;
+  background:
+    radial-gradient(ellipse at top right, rgba(255, 45, 149, 0.04), transparent 50%),
+    radial-gradient(ellipse at bottom left, rgba(0, 229, 255, 0.04), transparent 50%),
+    var(--color-bg);
+}
+.granule-soft::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='9'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.03 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 200px 200px;
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+}
+.granule-soft > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Monaco active-line indicator */
+.active-line-neon {
+  background: linear-gradient(
+    90deg,
+    rgba(57, 255, 20, 0.22) 0%,
+    rgba(57, 255, 20, 0.06) 40%,
+    transparent 100%
+  ) !important;
+  box-shadow: inset 3px 0 0 0 #39ff14;
+  animation: pulse-line 2s ease-in-out infinite;
+}
+.active-line-glyph {
+  background: #39ff14 !important;
+  width: 3px !important;
+  margin-left: 4px;
+  box-shadow: 0 0 10px #39ff14, 0 0 4px #39ff14;
+}
+
+.active-line-decoration {
+  background: linear-gradient(to right, rgba(57, 255, 20, 0.5), transparent);
+  width: 3px !important;
+}
+
+/* Gutter dot for lines visited in this trace */
+.visited-line-glyph {
+  background: rgba(57, 255, 20, 0.35);
+  border-radius: 50%;
+  width: 5px !important;
+  height: 5px !important;
+  margin-left: 3px !important;
+  margin-top: 8px !important;
+  cursor: pointer;
+}
+.visited-line-cool {
+  background: linear-gradient(to right, transparent, rgba(57, 255, 20, 0.18));
+  width: 3px !important;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.visited-line-warm {
+  background: linear-gradient(to right, transparent, rgba(57, 255, 20, 0.4));
+  width: 3px !important;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.visited-line-hot {
+  background: linear-gradient(to right, transparent, rgba(57, 255, 20, 0.7));
+  box-shadow: 0 0 4px rgba(57, 255, 20, 0.4);
+  width: 3px !important;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.visited-line-glyph-stale {
+  background: linear-gradient(to right, transparent, rgba(255, 180, 0, 0.4));
+  width: 3px !important;
+  margin-left: 2px;
+  cursor: pointer;
+}
+
+/* Breakpoint glyph in gutter */
+.breakpoint-glyph {
+  background: radial-gradient(circle at center, #FF2D95 0%, #FF2D95 50%, transparent 70%);
+  width: 12px !important;
+  height: 12px !important;
+  margin-left: 2px !important;
+  margin-top: 5px !important;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(255, 45, 149, 0.6);
+  border-radius: 50%;
+}
+
+/* Inline value hint shown after the active line */
+.inline-value-hint {
+  color: #71717A !important;
+  font-style: italic !important;
+  font-size: 11px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  opacity: 0.85;
+  background: linear-gradient(to right, rgba(57, 255, 20, 0.04), transparent 80%);
+  padding-left: 8px;
+  border-left: 1px solid rgba(57, 255, 20, 0.15);
+  margin-left: 12px;
+}
+
+/* Branch decision hints — when the active line is an if/while/for */
+.inline-hint-true {
+  color: #39FF14 !important;
+  font-style: italic !important;
+  font-size: 11px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500;
+  background: linear-gradient(to right, rgba(57, 255, 20, 0.12), rgba(57, 255, 20, 0.02) 60%, transparent);
+  padding-left: 10px;
+  border-left: 2px solid rgba(57, 255, 20, 0.6);
+  margin-left: 12px;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+}
+
+.inline-hint-false {
+  color: #FF6B7A !important;
+  font-style: italic !important;
+  font-size: 11px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500;
+  background: linear-gradient(to right, rgba(255, 107, 122, 0.10), rgba(255, 107, 122, 0.02) 60%, transparent);
+  padding-left: 10px;
+  border-left: 2px solid rgba(255, 107, 122, 0.5);
+  margin-left: 12px;
+}
+
+@keyframes pulse-line {
+  0%, 100% { box-shadow: inset 3px 0 0 0 #39ff14, 0 0 0 0 transparent; }
+  50% { box-shadow: inset 3px 0 0 0 #39ff14, 0 0 16px 0 rgba(57, 255, 20, 0.15); }
+}
+
+/* Mutation pulse animation */
+@keyframes pulse-once {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(57, 255, 20, 0);
+  }
+  20% {
+    transform: scale(1.015);
+    box-shadow: 0 0 24px 4px rgba(57, 255, 20, 0.25);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(57, 255, 20, 0);
+  }
+}
+.animate-pulse-once {
+  animation: pulse-once 0.8s ease-out;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.12);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+/* Selection */
+::selection {
+  background: rgba(57, 255, 20, 0.25);
+  color: #fff;
+}
+
+/* Focus rings — only on keyboard nav */
+:focus-visible {
+  outline: 2px solid rgba(57, 255, 20, 0.5);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
