@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "predev": "npm run build:worker",
     "dev": "next dev",
     "build": "prisma generate && npm run build:worker && npm run build:java && next build",
@@ -12,7 +13,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "build:worker": "tsc --project tsconfig.worker.json",
-    "build:java": "mkdir -p dist/java && javac -d dist/java src/lib/executor/java/Tracer.java"
+    "build:java": "mkdir -p dist/java && (javac -d dist/java src/lib/executor/java/Tracer.java || echo 'javac not found, skipping Java build')"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
