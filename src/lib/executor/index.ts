@@ -11,6 +11,7 @@
 
 import { executeJavaScript } from './js/runner';
 import { executeJava } from './java/runner';
+import { executeJavaRemote } from './java/piston-runner';
 import type { ExecuteResponse, ExecutorOptions, Language } from './types';
 
 const DEFAULT_OPTS: ExecutorOptions = {
@@ -20,7 +21,25 @@ const DEFAULT_OPTS: ExecutorOptions = {
   maxStringLength: 200,
 };
 
-export function executeCode(
+/**
+ * Check whether local JDK tooling is available.
+ * Cached after first check so we don't stat the filesystem on every request.
+ */
+let _hasLocalJdk: boolean | null = null;
+async function hasLocalJdk(): Promise<boolean> {
+  if (_hasLocalJdk !== null) return _hasLocalJdk;
+  try {
+    const { access } = await import('fs/promises');
+    const path = await import('path');
+    await access(path.join(process.cwd(), 'dist/java/Tracer.class'));
+    _hasLocalJdk = true;
+  } catch {
+    _hasLocalJdk = false;
+  }
+  return _hasLocalJdk;
+}
+
+export async function executeCode(
   code: string,
   language: Language,
   overrides: Partial<ExecutorOptions> = {}
@@ -30,9 +49,16 @@ export function executeCode(
   switch (language) {
     case 'javascript':
       return executeJavaScript(code, opts);
-    case 'java':
-      // Java needs more time — JVM startup alone can be 500ms
-      return executeJava(code, { ...opts, timeoutMs: Math.max(opts.timeoutMs, 10000) });
+    case 'java': {
+      // Java needs more time — JVM startup alone can be 500ms locally,
+      // and remote APIs need network round-trip time
+      const javaOpts = { ...opts, timeoutMs: Math.max(opts.timeoutMs, 15000) };
+      if (await hasLocalJdk()) {
+        return executeJava(code, javaOpts);
+      }
+      // Fallback: use Piston API for remote execution (e.g. on Vercel)
+      return executeJavaRemote(code, javaOpts);
+    }
     default:
       return Promise.resolve({
         trace: [],
