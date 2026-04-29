@@ -5,7 +5,7 @@
   "scripts": {
     "predev": "npm run build:worker",
     "dev": "next dev",
-    "build": "npm run build:worker && npm run build:java && next build",
+    "build": "prisma generate && npm run build:worker && npm run build:java && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
